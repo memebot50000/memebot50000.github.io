@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Deduction Engine</title>
-<script type="importmap">
-{
-  "imports": {
-    "@huggingface/inference": "https://cdn.jsdelivr.net/npm/@huggingface/inference@2.8.1/+esm"
-  }
-}
-</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -278,9 +271,10 @@
   .token-prompt {
     background: rgba(139,105,20,0.1);
     border: 2px solid var(--sepia);
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 1.5rem;
     text-align: center;
+    line-height: 1.7;
+    grid-column: 1 / -1;
   }
 
   .token-prompt input {
@@ -363,11 +357,13 @@
 
 </div>
 
-<script type="module">
-import { HfInference } from '@huggingface/inference';
-
+<script>
 let stream = null;
-let hf = null;
+let hfToken = null;
+
+// router.huggingface.co is the Serverless Inference router — it includes
+// proper CORS headers and works from browser pages (unlike api-inference.huggingface.co)
+const HF_BASE = 'https://router.huggingface.co/hf-inference/models';
 
 window.saveToken = function() {
   const token = document.getElementById('token-input').value.trim();
@@ -376,16 +372,15 @@ window.saveToken = function() {
     return;
   }
   localStorage.setItem('hf_token', token);
-  hf = new HfInference(token);
+  hfToken = token;
   document.getElementById('token-prompt-box').style.display = 'none';
   document.getElementById('main-app').style.display = 'grid';
 };
 
-// Check for saved token on load
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('hf_token');
   if (saved) {
-    hf = new HfInference(saved);
+    hfToken = saved;
     document.getElementById('token-prompt-box').style.display = 'none';
     document.getElementById('main-app').style.display = 'grid';
   }
@@ -417,7 +412,7 @@ function captureFrame() {
   canvas.width = video.videoWidth || 640;
   canvas.height = video.videoHeight || 480;
   canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL('image/jpeg', 0.92);
+  return canvas.toDataURL('image/jpeg', 0.85);
 }
 
 window.retake = function() {
@@ -473,9 +468,37 @@ window.captureAndAnalyze = async function() {
   }
 };
 
-async function analyzeImage(base64Img) {
-  const blob = await fetch(`data:image/jpeg;base64,${base64Img}`).then(r => r.blob());
+async function hfChat(model, messages, maxTokens, stream) {
+  const url = `${HF_BASE}/${model}/v1/chat/completions`;
+  const body = {
+    model: model,
+    messages: messages,
+    max_tokens: maxTokens,
+    stream: !!stream
+  };
 
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${hfToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    let errMsg = `HTTP ${resp.status}`;
+    try {
+      const errData = await resp.json();
+      errMsg = errData.error || errMsg;
+    } catch(_) {}
+    throw new Error(errMsg);
+  }
+
+  return resp;
+}
+
+async function analyzeImage(base64Img) {
   const prompt = `You are analyzing a face photograph. Extract observable details as JSON only (no markdown, no explanation).
 
 {
@@ -494,21 +517,23 @@ async function analyzeImage(base64Img) {
   "clothing": "e.g. dark shirt"
 }`;
 
-  const result = await hf.chatCompletion({
-    model: "meta-llama/Llama-3.2-11B-Vision-Instruct",
-    messages: [
+  const resp = await hfChat(
+    'meta-llama/Llama-3.2-11B-Vision-Instruct',
+    [
       {
-        role: "user",
+        role: 'user',
         content: [
-          { type: "text", text: prompt },
-          { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Img}` } }
+          { type: 'text', text: prompt },
+          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Img}` } }
         ]
       }
     ],
-    max_tokens: 500
-  });
+    500,
+    false
+  );
 
-  const text = result.choices[0].message.content;
+  const data = await resp.json();
+  const text = data.choices[0].message.content;
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('Could not parse response');
   return JSON.parse(jsonMatch[0]);
@@ -516,7 +541,7 @@ async function analyzeImage(base64Img) {
 
 function renderObservations(obs) {
   const fields = Object.entries(obs)
-    .filter(([k, v]) => v && !['none', 'n/a'].includes(v.toLowerCase()))
+    .filter(([k, v]) => v && !['none', 'n/a'].includes(String(v).toLowerCase()))
     .map(([k, v]) => [k.replace(/_/g, ' '), v]);
 
   document.getElementById('obs-area').innerHTML = `<div class="data-grid">${fields.map(([l, v]) => `
@@ -539,17 +564,39 @@ ${obsText}`;
 
   let fullText = '';
 
-  for await (const chunk of hf.chatCompletionStream({
-    model: "meta-llama/Llama-3.3-70B-Instruct",
-    messages: [{ role: "user", content: prompt }],
-    max_tokens: 1000,
-    temperature: 0.8
-  })) {
-    const delta = chunk.choices[0]?.delta?.content || '';
-    if (delta) {
-      fullText += delta;
-      const paragraphs = fullText.split(/\n\n+/).filter(Boolean);
-      textEl.innerHTML = paragraphs.map(p => `<p>${p.replace(/\n/g, ' ')}</p>`).join('');
+  const resp = await hfChat(
+    'meta-llama/Llama-3.3-70B-Instruct',
+    [{ role: 'user', content: prompt }],
+    1000,
+    true
+  );
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop(); // keep incomplete line
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed === 'data: [DONE]') continue;
+      if (!trimmed.startsWith('data: ')) continue;
+
+      try {
+        const json = JSON.parse(trimmed.slice(6));
+        const delta = json.choices?.[0]?.delta?.content || '';
+        if (delta) {
+          fullText += delta;
+          const paragraphs = fullText.split(/\n\n+/).filter(Boolean);
+          textEl.innerHTML = paragraphs.map(p => `<p>${p.replace(/\n/g, ' ')}</p>`).join('');
+        }
+      } catch(_) {}
     }
   }
 
