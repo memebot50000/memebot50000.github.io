@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOUGHT INTERNATIONAL — COMPOUND V ASSESSMENT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Oswald:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg:        #03070f;
+  --panel:     #060d1a;
+  --border:    #0a3a6e;
+  --glow:      #1a6fd4;
+  --bright:    #4da6ff;
+  --brightest: #a8d4ff;
+  --red:       #d42020;
+  --red-glow:  #ff3030;
+  --gold:      #c8961e;
+  --gold-bright:#f0b830;
+  --text:      #7ab8f5;
+  --text-dim:  #3a6a9a;
+  --scan:      rgba(26,111,212,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 3rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--scan) 50%, transparent);
+  animation: scanbar 6s linear infinite;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes scanbar { from { top: -120px; } to { top: 100vh; } }
+
+.corner-deco {
+  position: fixed;
+  width: 60px; height: 60px;
+  pointer-events: none;
+  z-index: 998;
+}
+.corner-deco.tl { top: 10px; left: 10px; border-top: 2px solid var(--glow); border-left: 2px solid var(--glow); }
+.corner-deco.tr { top: 10px; right: 10px; border-top: 2px solid var(--glow); border-right: 2px solid var(--glow); }
+.corner-deco.bl { bottom: 10px; left: 10px; border-bottom: 2px solid var(--glow); border-left: 2px solid var(--glow); }
+.corner-deco.br { bottom: 10px; right: 10px; border-bottom: 2px solid var(--glow); border-right: 2px solid var(--glow); }
+
+.masthead {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.vought-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold);
+  margin-bottom: 0.3rem;
+}
+
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  letter-spacing: 0.08em;
+  color: var(--brightest);
+  text-shadow: 0 0 30px var(--glow), 0 0 60px rgba(26,111,212,0.3);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.subtitle span {
+  color: var(--red-glow);
+  animation: blink 1.8s step-end infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.divider {
+  width: 100%;
+  max-width: 1000px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), var(--glow), var(--border), transparent);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.divider::after {
+  content: '◆';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  color: var(--glow);
+  font-size: 0.6rem;
+  background: var(--bg);
+  padding: 0 0.5rem;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  max-width: 1000px;
+  width: 100%;
+}
+
+@media (max-width: 680px) {
+  .container { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  position: relative;
+  padding: 1.2rem;
+  box-shadow: 0 0 20px rgba(10,58,110,0.4), inset 0 0 30px rgba(0,0,0,0.5);
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, rgba(26,111,212,0.08) 0%, transparent 60%) border-box;
+  pointer-events: none;
+}
+
+.panel::after {
+  content: '';
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  border-top: 1px solid rgba(26,111,212,0.2);
+  border-left: 1px solid rgba(26,111,212,0.2);
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-header-dot {
+  width: 6px; height: 6px;
+  background: var(--glow);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--glow);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--glow); }
+  50% { opacity: 0.4; box-shadow: 0 0 2px var(--glow); }
+}
+
+.panel-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--bright);
+  text-shadow: 0 0 8px var(--glow);
+}
+
+.panel-id {
+  margin-left: auto;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ── QUIZ STYLES ── */
+#quiz-box {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.quiz-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1.8rem 2rem;
+  position: relative;
+  box-shadow: 0 0 20px rgba(10,58,110,0.4), inset 0 0 30px rgba(0,0,0,0.5);
+}
+
+.quiz-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, rgba(26,111,212,0.08) 0%, transparent 60%) border-box;
+  pointer-events: none;
+}
+
+.quiz-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.quiz-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--red-glow);
+  animation: blink 1.8s step-end infinite;
+  margin-bottom: 0.5rem;
+}
+
+.quiz-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.2em;
+  color: var(--bright);
+  text-shadow: 0 0 20px var(--glow);
+  margin-bottom: 0.4rem;
+}
+
+.quiz-sub {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+.quiz-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.8rem;
+}
+
+.quiz-prog-seg {
+  height: 3px;
+  flex: 1;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.quiz-prog-seg.done { background: var(--glow); box-shadow: 0 0 4px var(--glow); }
+.quiz-prog-seg.active { background: var(--gold); box-shadow: 0 0 4px var(--gold); }
+
+.question-block {
+  display: none;
+}
+.question-block.active { display: block; }
+
+.question-num {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+
+.question-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--brightest);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+@media (max-width: 500px) { .quiz-options { grid-template-columns: 1fr; } }
+
+.quiz-opt {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  position: relative;
+}
+
+.quiz-opt::before {
+  content: '▸ ';
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+
+.quiz-opt:hover {
+  border-color: var(--glow);
+  color: var(--bright);
+  text-shadow: 0 0 6px var(--glow);
+  box-shadow: 0 0 10px rgba(26,111,212,0.2);
+}
+
+.quiz-opt:hover::before { color: var(--glow); }
+
+.quiz-opt.selected {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold);
+  background: rgba(200,150,30,0.07);
+  box-shadow: 0 0 12px rgba(200,150,30,0.2);
+}
+
+.quiz-opt.selected::before { color: var(--gold-bright); content: '◆ '; }
+
+.quiz-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.2rem;
+  gap: 0.6rem;
+}
+
+/* ── CAMERA ── */
+#camera-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+#camera-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(26,111,212,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,111,212,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#camera-wrap::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 120px; height: 120px;
+  border: 1px solid rgba(26,111,212,0.5);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(26,111,212,0.2), inset 0 0 20px rgba(26,111,212,0.05);
+  pointer-events: none;
+  z-index: 3;
+}
+
+#video, #snapshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#snapshot { display: none; filter: brightness(0.9) contrast(1.05) saturate(0.8) sepia(0.1); }
+#snapshot-canvas { display: none; }
+
+.camera-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hud-corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--bright);
+  border-style: solid;
+  opacity: 0.8;
+}
+.hud-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+.hud-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.hud-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+.hud-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+.hud-label {
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--bright);
+  opacity: 0.7;
+}
+
+.hud-coords {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ── BUTTONS ── */
+.controls {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(26,111,212,0.1), transparent);
+  pointer-events: none;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--glow);
+  color: var(--bright);
+  box-shadow: 0 0 12px rgba(26,111,212,0.3);
+  text-shadow: 0 0 8px var(--glow);
+}
+
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-primary {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold);
+  box-shadow: 0 0 10px rgba(200,150,30,0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: var(--gold-bright);
+  background: rgba(200,150,30,0.1);
+  box-shadow: 0 0 20px rgba(200,150,30,0.4);
+}
+
+#retake-controls { display: none; }
+
+/* ── SCAN DATA GRID ── */
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 0.8rem;
+}
+
+.data-item {
+  border-bottom: 1px solid rgba(10,58,110,0.5);
+  padding-bottom: 0.3rem;
+}
+
+.data-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.data-value {
+  font-size: 0.85rem;
+  color: var(--bright);
+  text-shadow: 0 0 4px var(--glow);
+  margin-top: 0.1rem;
+}
+
+.panel-wide {
+  grid-column: 1 / -1;
+  min-height: 280px;
+}
+
+/* ── RESULT CARD ── */
+.result-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.codename-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(200,150,30,0.06);
+  border: 1px solid var(--gold);
+  padding: 0.8rem 1.1rem;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+}
+
+.codename-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.codename-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px var(--gold), 0 0 40px rgba(200,150,30,0.3);
+  line-height: 1;
+}
+
+.powers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+@media (max-width: 500px) { .powers-row { grid-template-columns: 1fr; } }
+
+.power-card {
+  border: 1px solid var(--border);
+  padding: 0.7rem 0.9rem;
+  background: rgba(26,111,212,0.04);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.power-card.primary { border-color: var(--gold); background: rgba(200,150,30,0.05); }
+
+.power-card-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.power-card.primary .power-card-label { color: var(--gold); }
+
+.power-card-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--bright);
+  text-shadow: 0 0 10px var(--glow);
+}
+
+.power-card.primary .power-card-value {
+  color: var(--gold-bright);
+  text-shadow: 0 0 12px var(--gold);
+}
+
+.result-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+  margin: 1rem 0;
+}
+
+.analysis-text {
+  font-size: 0.83rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+.analysis-text p { margin-bottom: 0.9em; }
+.analysis-text p:first-child { color: var(--brightest); }
+
+.result-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+.threat-block { display: flex; align-items: center; gap: 0.6rem; flex: 1; }
+
+.threat-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.threat-segments {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+
+.threat-seg {
+  height: 8px;
+  flex: 1;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.threat-seg.active-1 { background: #1a6fd4; box-shadow: 0 0 4px #1a6fd4; }
+.threat-seg.active-2 { background: #2a9f4f; box-shadow: 0 0 4px #2a9f4f; }
+.threat-seg.active-3 { background: #c8961e; box-shadow: 0 0 4px #c8961e; }
+.threat-seg.active-4 { background: #d42020; box-shadow: 0 0 4px #d42020; }
+
+.threat-level-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  padding: 0.25rem 0.8rem;
+  border: 1px solid var(--red);
+  color: var(--red-glow);
+  text-shadow: 0 0 6px var(--red);
+  background: rgba(212,32,32,0.06);
+  white-space: nowrap;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+
+/* ── STATUS / SPINNER ── */
+.status {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 1px solid var(--border);
+  border-top-color: var(--bright);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.status-line {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  animation: fade-cycle 2s ease-in-out infinite;
+}
+
+@keyframes fade-cycle { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+.error {
+  background: rgba(212,32,32,0.08);
+  border: 1px solid var(--red);
+  color: var(--red-glow);
+  padding: 0.6rem 0.8rem;
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+/* ── TOKEN SETUP ── */
+#token-prompt-box { width: 100%; max-width: 1000px; }
+
+.setup-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.setup-panel::before {
+  content: '// AUTHENTICATION REQUIRED //';
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--red-glow);
+  margin-bottom: 1.5rem;
+  animation: blink 1.8s step-end infinite;
+}
+
+.setup-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.2em;
+  color: var(--bright);
+  text-shadow: 0 0 20px var(--glow);
+  margin-bottom: 0.5rem;
+}
+
+.setup-body {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.setup-body a { color: var(--bright); text-decoration: none; }
+.setup-body a:hover { text-shadow: 0 0 8px var(--glow); }
+
+.setup-input {
+  width: 100%;
+  max-width: 440px;
+  padding: 0.7rem 1rem;
+  background: rgba(26,111,212,0.05);
+  border: 1px solid var(--border);
+  color: var(--bright);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.setup-input:focus {
+  border-color: var(--glow);
+  box-shadow: 0 0 12px rgba(26,111,212,0.3);
+}
+
+.setup-note {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+</style>
+</head>
+<body>
+
+<div class="corner-deco tl"></div>
+<div class="corner-deco tr"></div>
+<div class="corner-deco bl"></div>
+<div class="corner-deco br"></div>
+
+<div class="masthead">
+  <div class="vought-logo">VOUGHT INTERNATIONAL · SPECIAL PROJECTS DIVISION</div>
+  <div class="title">COMPOUND V</div>
+  <div class="subtitle">SUPE IDENTIFICATION SYSTEM &nbsp;·&nbsp; <span>CLASSIFIED</span> &nbsp;·&nbsp; CLEARANCE LEVEL OMEGA</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Token setup -->
+<div id="token-prompt-box">
+  <div class="setup-panel">
+    <div class="setup-title">OPERATOR AUTHENTICATION</div>
+    <div class="setup-body">
+      This terminal requires an OpenRouter API key to interface with the biometric analysis core.<br>
+      Obtain clearance credentials at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> — no credit card required.
+    </div>
+    <input type="text" class="setup-input" id="token-input" placeholder="ENTER API KEY  (sk-or-...)">
+    <button class="btn btn-primary" onclick="saveToken()">AUTHORIZE ACCESS</button>
+    <span class="setup-note">Key stored locally in browser. Never transmitted except to OpenRouter API.</span>
+  </div>
+</div>
+
+<!-- Personality Quiz -->
+<div id="quiz-box" style="display:none;">
+  <div class="quiz-panel">
+    <div class="quiz-header">
+      <div class="quiz-eyebrow">// PRE-ASSESSMENT PROTOCOL //</div>
+      <div class="quiz-title">PSYCHOLOGICAL PROFILE INTAKE</div>
+      <div class="quiz-sub">ANSWER TRUTHFULLY — RESPONSES INFORM COMPOUND V COMPATIBILITY MATRIX</div>
+    </div>
+
+    <div class="quiz-progress" id="quiz-progress"></div>
+
+    <!-- Q1 -->
+    <div class="question-block active" id="q-0">
+      <div class="question-num">QUESTION 01 / 05</div>
+      <div class="question-text">When faced with a threat, your instinct is to—</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectOption(0,0,'Confront it head-on. Aggression is a deterrent.')">Confront it head-on. Aggression is a deterrent.</button>
+        <button class="quiz-opt" onclick="selectOption(0,1,'Observe and strategize before acting.')">Observe and strategize before acting.</button>
+        <button class="quiz-opt" onclick="selectOption(0,2,'De-escalate. Violence solves nothing.')">De-escalate. Violence solves nothing.</button>
+        <button class="quiz-opt" onclick="selectOption(0,3,'Disappear until the threat passes.')">Disappear until the threat passes.</button>
+      </div>
+      <div class="quiz-nav"><button class="btn btn-primary" onclick="nextQ(0)" id="qnext-0" disabled>NEXT ▸</button></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block" id="q-1">
+      <div class="question-num">QUESTION 02 / 05</div>
+      <div class="question-text">What do you value most in yourself?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectOption(1,0,'Physical strength and resilience.')">Physical strength and resilience.</button>
+        <button class="quiz-opt" onclick="selectOption(1,1,'Intelligence and perception.')">Intelligence and perception.</button>
+        <button class="quiz-opt" onclick="selectOption(1,2,'Empathy and connection with others.')">Empathy and connection with others.</button>
+        <button class="quiz-opt" onclick="selectOption(1,3,'Adaptability and self-reliance.')">Adaptability and self-reliance.</button>
+      </div>
+      <div class="quiz-nav"><button class="btn btn-primary" onclick="nextQ(1)" id="qnext-1" disabled>NEXT ▸</button></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block" id="q-2">
+      <div class="question-num">QUESTION 03 / 05</div>
+      <div class="question-text">How do you feel about public recognition?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectOption(2,0,'I crave it. Fame is power.')">I crave it. Fame is power.</button>
+        <button class="quiz-opt" onclick="selectOption(2,1,'I accept it when deserved, but don\'t seek it.')">I accept it when deserved, but don't seek it.</button>
+        <button class="quiz-opt" onclick="selectOption(2,2,'I prefer working from the shadows.')">I prefer working from the shadows.</button>
+        <button class="quiz-opt" onclick="selectOption(2,3,'Recognition makes me a target. I avoid it.')">Recognition makes me a target. I avoid it.</button>
+      </div>
+      <div class="quiz-nav"><button class="btn btn-primary" onclick="nextQ(2)" id="qnext-2" disabled>NEXT ▸</button></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block" id="q-3">
+      <div class="question-num">QUESTION 04 / 05</div>
+      <div class="question-text">In a crisis, what describes your role?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectOption(3,0,'I charge in first — others follow me.')">I charge in first — others follow me.</button>
+        <button class="quiz-opt" onclick="selectOption(3,1,'I coordinate and direct the response.')">I coordinate and direct the response.</button>
+        <button class="quiz-opt" onclick="selectOption(3,2,'I protect and evacuate the vulnerable.')">I protect and evacuate the vulnerable.</button>
+        <button class="quiz-opt" onclick="selectOption(3,3,'I work alone on the hardest problem.')">I work alone on the hardest problem.</button>
+      </div>
+      <div class="quiz-nav"><button class="btn btn-primary" onclick="nextQ(3)" id="qnext-3" disabled>NEXT ▸</button></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block" id="q-4">
+      <div class="question-num">QUESTION 05 / 05</div>
+      <div class="question-text">What is your relationship with authority?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectOption(4,0,'I am the authority. Others fall in line.')">I am the authority. Others fall in line.</button>
+        <button class="quiz-opt" onclick="selectOption(4,1,'I respect it when it\'s earned and justified.')">I respect it when it's earned and justified.</button>
+        <button class="quiz-opt" onclick="selectOption(4,2,'I question it — systems exist to be challenged.')">I question it — systems exist to be challenged.</button>
+        <button class="quiz-opt" onclick="selectOption(4,3,'I operate outside it entirely.')">I operate outside it entirely.</button>
+      </div>
+      <div class="quiz-nav"><button class="btn btn-primary" onclick="finishQuiz()" id="qnext-4" disabled>PROCEED TO BIOMETRIC SCAN ▸</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Main app -->
+<div class="container" id="main-app" style="display:none;">
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-header-dot"></div>
+      <div class="panel-title">BIOMETRIC CAPTURE</div>
+      <div class="panel-id">CAM-01 // LIVE</div>
+    </div>
+
+    <div id="camera-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <img id="snapshot" alt="Subject capture">
+      <canvas id="snapshot-canvas"></canvas>
+      <div class="camera-hud">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+        <div class="hud-label">FACIAL SCAN ACTIVE</div>
+        <div class="hud-coords" id="hud-coords">LAT: —<br>LON: —<br>ALT: —</div>
+      </div>
+    </div>
+
+    <div class="controls" id="live-controls">
+      <button class="btn" id="start-cam-btn" onclick="startCamera()">INITIALIZE CAMERA</button>
+      <button class="btn btn-primary" id="capture-btn" onclick="captureAndAnalyze()" disabled>ADMINISTER SCAN</button>
+    </div>
+    <div class="controls" id="retake-controls">
+      <button class="btn" onclick="retake()">NEW SUBJECT</button>
+    </div>
+    <div id="error-area"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-header-dot"></div>
+      <div class="panel-title">PHENOTYPE SCAN DATA</div>
+      <div class="panel-id">BIO-SCAN // V2.4</div>
+    </div>
+    <div id="obs-area">
+      <div class="placeholder">AWAITING BIOMETRIC INPUT<br>POSITION SUBJECT IN FRAME</div>
+    </div>
+  </div>
+
+  <div class="panel panel-wide">
+    <div class="panel-header">
+      <div class="panel-header-dot"></div>
+      <div class="panel-title">COMPOUND V IDENTIFICATION REPORT</div>
+      <div class="panel-id">VOUGHT-AI // IDENT ENGINE</div>
+    </div>
+    <div id="analysis-area">
+      <div class="placeholder">IDENTIFICATION ENGINE STANDING BY<br>COMPLETE BIOMETRIC SCAN TO IDENTIFY SUPE DESIGNATION</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const OR_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const VISION_MODELS = [
+  'nvidia/nemotron-nano-12b-v2-vl:free',
+  'openrouter/auto',
+];
+const TEXT_MODELS = [
+  'openai/gpt-oss-20b:free',
+  'openai/gpt-oss-120b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'openrouter/auto',
+];
+
+const POWERS_LIST = `Acid Attack, Adaptive Ability, All Your Powers Combined, Always Accurate Attack, Animal Eye Spy, Animalistic Abilities, Animal-Themed Superbeing, Anti-Magic, Ashes to Ashes, As Long as There Is Evil, Astral Projection, Atomic Superpower, Attack Reflector, Aura Vision, Awesomeness by Analysis, Bad Powers Bad People, Bad Powers Good People, Ball of Light Transformation, Barrier Warrior, Battle Aura, The Beastmaster, Biomanipulation, Bloody Murder, Blow You Away, Born Lucky, Bouncing Battler, Brain Critical Mass, Breath Weapon, Cannibalism Superpower, Carbon Skin, Casting a Shadow, Chameleon Camouflage, Charm Person, Chrome Champion, Clothes Make the Superman, Combat Clairvoyance, Combat Tentacles, Combo Platter Powers, Compelling Voice, Complete Immortality, Deadly Gaze, Detachment Combat, Detect Evil, Dishing Out Dirt, Dreaming of Things to Come, Dream Weaver, Elemental Absorption, Elemental Powers, Emotional Powers, Emotion Control, The Empath, Energy Absorption, Eye Beams, Fake Memories, Feather Fall, Flight, Flying Brick, Flying Firepower, Goo It Up, Gravity Master, Green Thumb, Hand Blast, Having a Blast, Healing Factor, Healing Hands, An Ice Person, I Know What You Fear, Imagination-Based Superpower, Intangibility, Invisibility, Ki Manipulation, Kiss of Death, Light 'em Up, Living Aphrodisiac, Living Lie Detector, Magma Man, Magnetism Manipulation, Make Some Noise, Make Them Rot, Making a Splash, Master of Illusion, Mind Over Matter, Nigh-Invulnerability, Organ Autonomy, Playing with Fire, Poisonous Person, Power Copying, Power Nullifier, The Power of Creation, Power Parasite, Prehensile Hair, Projectile Webbing, Psi Blast, Psychic Powers, Pure Energy, Reality Warper, Resurrective Immortality, Rubber Man, Sand Blaster, Self-Duplication, Shock and Awe, Shockwave Clap, Sizeshifter, Soul Power, Space Master, Speaks Fluent Animal, Spider-Sense, Super-Breath, Super-Hearing, Super-Intelligence, Super-Reflexes, Super-Scream, Super-Senses, Super-Speed, Super-Strength, Super-Toughness, Swiss-Army Superpower, Taken for Granite, Technopath, Telepathy, Teleportation, Time Master, Time Travel, Touch of Death, Touch Telepathy, The Transmogrifier, Transmutation, Unbreakable Bones, Vampiric Draining, Vibration Manipulation, Voluntary Shapeshifting, Walk on Water, Wall Crawl, Weather Manipulation, X-Ray Vision, 90% of Your Brain, Acquired Poison Immunity, Charles Atlas Superpower, Disability Superpower, Hyper-Awareness, Improbable Aiming Skills, Martial Arts, Photographic Memory, Sherlock Scan, Uninhibited Muscle Power, World's Strongest Man`;
+
+let stream = null;
+let apiKey = null;
+let quizAnswers = [];
+const TOTAL_QUESTIONS = 5;
+
+// Init quiz progress bar
+(function initProgress() {
+  const bar = document.getElementById('quiz-progress');
+  if (!bar) return;
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'quiz-prog-seg' + (i === 0 ? ' active' : '');
+    seg.id = 'prog-' + i;
+    bar.appendChild(seg);
+  }
+})();
+
+function updateProgress(current) {
+  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+    const seg = document.getElementById('prog-' + i);
+    if (!seg) continue;
+    seg.className = 'quiz-prog-seg' + (i < current ? ' done' : i === current ? ' active' : '');
+  }
+}
+
+window.selectOption = function(qIdx, optIdx, text) {
+  const block = document.getElementById('q-' + qIdx);
+  block.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+  block.querySelectorAll('.quiz-opt')[optIdx].classList.add('selected');
+  quizAnswers[qIdx] = text;
+  const nextBtn = document.getElementById('qnext-' + qIdx);
+  if (nextBtn) nextBtn.disabled = false;
+};
+
+window.nextQ = function(current) {
+  document.getElementById('q-' + current).classList.remove('active');
+  document.getElementById('q-' + (current + 1)).classList.add('active');
+  updateProgress(current + 1);
+};
+
+window.finishQuiz = function() {
+  document.getElementById('quiz-box').style.display = 'none';
+  document.getElementById('main-app').style.display = 'grid';
+};
+
+// Animate fake coords
+setInterval(() => {
+  const el = document.getElementById('hud-coords');
+  if (el) el.innerHTML =
+    `LAT: ${(Math.random()*180-90).toFixed(4)}<br>LON: ${(Math.random()*360-180).toFixed(4)}<br>ALT: ${(Math.random()*100+10).toFixed(1)}m`;
+}, 1500);
+
+function showMain() {
+  document.getElementById('token-prompt-box').style.display = 'none';
+  document.getElementById('quiz-box').style.display = 'block';
+}
+
+window.saveToken = function() {
+  const key = document.getElementById('token-input').value.trim();
+  if (!key.startsWith('sk-or-')) {
+    alert('Invalid key format. OpenRouter keys begin with sk-or-');
+    return;
+  }
+  localStorage.setItem('or_key', key);
+  apiKey = key;
+  showMain();
+};
+
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('or_key');
+  if (saved) { apiKey = saved; showMain(); }
+});
+
+window.startCamera = async function() {
+  const btn = document.getElementById('start-cam-btn');
+  btn.disabled = true;
+  btn.textContent = 'INITIALIZING...';
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 }, audio: false });
+    document.getElementById('video').srcObject = stream;
+    await document.getElementById('video').play();
+    document.getElementById('capture-btn').disabled = false;
+    btn.textContent = '✓ ONLINE';
+  } catch(e) {
+    showError('CAMERA ACCESS DENIED — CHECK PERMISSIONS');
+    btn.disabled = false;
+    btn.textContent = 'INITIALIZE CAMERA';
+  }
+};
+
+function captureFrame() {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('snapshot-canvas');
+  const maxW = 512;
+  const scale = Math.min(1, maxW / (video.videoWidth || 640));
+  canvas.width  = Math.round((video.videoWidth  || 640) * scale);
+  canvas.height = Math.round((video.videoHeight || 480) * scale);
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', 0.7);
+}
+
+window.retake = function() {
+  document.getElementById('retake-controls').style.display = 'none';
+  document.getElementById('live-controls').style.display = 'flex';
+  document.getElementById('snapshot').style.display = 'none';
+  document.getElementById('video').style.display = 'block';
+  document.getElementById('obs-area').innerHTML = '<div class="placeholder">AWAITING BIOMETRIC INPUT<br>POSITION SUBJECT IN FRAME</div>';
+  document.getElementById('analysis-area').innerHTML = '<div class="placeholder">IDENTIFICATION ENGINE STANDING BY<br>COMPLETE BIOMETRIC SCAN TO IDENTIFY SUPE DESIGNATION</div>';
+  document.getElementById('error-area').innerHTML = '';
+  startCamera();
+};
+
+window.captureAndAnalyze = async function() {
+  showError('');
+  const dataUrl = captureFrame();
+  const base64Img = dataUrl.split(',')[1];
+
+  document.getElementById('video').style.display = 'none';
+  const snap = document.getElementById('snapshot');
+  snap.src = dataUrl;
+  snap.style.display = 'block';
+  document.getElementById('live-controls').style.display = 'none';
+  document.getElementById('retake-controls').style.display = 'flex';
+
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+
+  document.getElementById('obs-area').innerHTML = `<div class="status"><span class="spinner"></span> SCANNING BIOMETRICS...<span class="status-line">ANALYZING PHENOTYPE MARKERS</span></div>`;
+  document.getElementById('analysis-area').innerHTML = `<div class="status"><span class="spinner"></span> STANDING BY...<span class="status-line">AWAITING SCAN DATA</span></div>`;
+
+  let observations;
+  try {
+    observations = await analyzeImage(base64Img);
+    renderObservations(observations);
+  } catch(e) {
+    showError('SCAN FAILED: ' + e.message);
+    document.getElementById('obs-area').innerHTML = '<div class="status">SCAN ERROR</div>';
+    document.getElementById('analysis-area').innerHTML = '<div class="status">ABORTED</div>';
+    return;
+  }
+
+  document.getElementById('analysis-area').innerHTML = `<div class="status"><span class="spinner"></span> IDENTIFYING SUPE DESIGNATION...<span class="status-line">CROSS-REFERENCING COMPOUND V COMPATIBILITY MATRIX</span></div>`;
+  try {
+    await generateAnalysis(observations);
+  } catch(e) {
+    showError('IDENTIFICATION FAILED: ' + e.message);
+    document.getElementById('analysis-area').innerHTML = '<div class="status">IDENTIFICATION ENGINE ERROR</div>';
+  }
+};
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function orFetch(model, messages, maxTokens, attempt = 0) {
+  const resp = await fetch(OR_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': location.href,
+      'X-Title': 'Compound V Assessment'
+    },
+    body: JSON.stringify({ model, messages, max_tokens: maxTokens, stream: false })
+  });
+
+  const data = await resp.json();
+  console.log(`[orFetch] model=${model} status=${resp.status}`, JSON.stringify(data).slice(0, 400));
+
+  const isRateLimit = resp.status === 429 || resp.status === 503 || data.error?.code === 429;
+  if (isRateLimit && attempt === 0) {
+    await sleep(3000);
+    return orFetch(model, messages, maxTokens, 1);
+  }
+
+  if (!resp.ok || data.error) {
+    const msg = data.error?.message || data.error || `HTTP ${resp.status}`;
+    throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+  }
+
+  const text = data.choices?.[0]?.message?.content?.trim();
+  if (!text) {
+    const reason = data.choices?.[0]?.finish_reason;
+    throw new Error(reason === 'content_filter' ? 'Content filtered by provider' : 'Empty response from provider');
+  }
+  return text;
+}
+
+async function analyzeImage(base64Img) {
+  const messages = [
+    {
+      role: 'system',
+      content: 'You are a helpful assistant that describes people in photos. Always respond with only a valid JSON object and nothing else.'
+    },
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: 'Please describe the person in this photo by filling in the following JSON fields. Respond with the JSON only:\n{"estimated_age":"","apparent_gender":"","ethnicity":"","skin_tone":"","hair":"","eye_color":"","facial_structure":"","facial_hair":"","expression":"","stress_level":"","health":"","grooming":"","clothing":""}'
+        },
+        { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Img}` } }
+      ]
+    }
+  ];
+
+  let lastErr;
+  for (const model of VISION_MODELS) {
+    try {
+      const text = await orFetch(model, messages, 400);
+      const cleaned = text.replace(/```(?:json)?/gi, '').trim();
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (!m) throw new Error('Response was not valid JSON');
+      return JSON.parse(m[0]);
+    } catch(e) {
+      lastErr = e;
+      console.warn(`Vision model ${model} failed: ${e.message} — trying next`);
+    }
+  }
+  throw lastErr;
+}
+
+function renderObservations(obs) {
+  const fields = Object.entries(obs)
+    .filter(([, v]) => v && !['none','n/a'].includes(String(v).toLowerCase()))
+    .map(([k, v]) => [k.replace(/_/g, ' '), v]);
+  document.getElementById('obs-area').innerHTML =
+    `<div class="data-grid">${fields.map(([l, v]) =>
+      `<div class="data-item"><div class="data-label">${l}</div><div class="data-value">${v}</div></div>`
+    ).join('')}</div>`;
+}
+
+async function generateAnalysis(obs) {
+  const obsText = Object.entries(obs).map(([k, v]) => `${k.replace(/_/g,' ')}: ${v}`).join('\n');
+  const quizText = quizAnswers.map((a, i) => `Q${i+1}: ${a}`).join('\n');
+
+  const prompt = `You are Vought International's AI-powered Compound V identification system. You are identifying the supe designation of a subject based on biometric scan data AND psychological profile answers.
+
+BIOMETRIC SCAN DATA:
+${obsText}
+
+PSYCHOLOGICAL PROFILE:
+${quizText}
+
+AVAILABLE POWERS TO DRAW FROM:
+${POWERS_LIST}
+
+Your response MUST follow this EXACT format — no deviations:
+
+CODENAME: [invent a 1-2 word superhero/villain codename befitting the subject, e.g. "IRONCLAD" or "PHANTOM WRAITH"]
+PRIMARY POWER: [power name from the list above]
+SECONDARY POWER: [power name from the list above]
+THREAT LEVEL: [LOW / MODERATE / HIGH / EXTREME]
+
+[Then write 4 paragraphs separated by blank lines. Paragraph 1: Introduce the subject by their codename and describe their overall supe profile. Paragraph 2: Explain the primary power — how it manifests, why it fits this subject's biometrics and psychology. Paragraph 3: Explain the secondary power and personality-power fit. Paragraph 4: Assess threat level, Compound V compatibility, and corporate potential. Write in the cold, clinical corporate tone of a Vought International dossier. Address as "the subject" or their codename. Reference the psychological profile answers directly.]`;
+
+  let text, lastErr;
+  for (const model of TEXT_MODELS) {
+    try {
+      text = await orFetch(model, [{ role: 'user', content: prompt }], 1000);
+      break;
+    } catch(e) {
+      lastErr = e;
+      console.warn(`Text model ${model} failed: ${e.message} — trying next`);
+    }
+  }
+  if (!text) throw lastErr;
+
+  const codenameMatch  = text.match(/CODENAME:\s*(.+)/i);
+  const primaryMatch   = text.match(/PRIMARY POWER:\s*(.+)/i);
+  const secondaryMatch = text.match(/SECONDARY POWER:\s*(.+)/i);
+  const threatMatch    = text.match(/THREAT LEVEL:\s*(LOW|MODERATE|HIGH|EXTREME)/i);
+
+  const codename      = codenameMatch   ? codenameMatch[1].trim().toUpperCase()   : 'UNKNOWN';
+  const primaryPower  = primaryMatch    ? primaryMatch[1].trim()   : 'UNDETERMINED';
+  const secondaryPower = secondaryMatch ? secondaryMatch[1].trim() : 'UNDETERMINED';
+  const threatLevel   = threatMatch     ? threatMatch[1].toUpperCase() : 'MODERATE';
+
+  const threatMap = { LOW: 1, MODERATE: 2, HIGH: 3, EXTREME: 4 };
+  const threatNum = threatMap[threatLevel] || 2;
+  const threatColors = ['active-1','active-2','active-3','active-4'];
+  const segs = Array.from({length: 10}, (_, i) => {
+    const segLevel = Math.ceil((i+1) / 2.5);
+    const active = segLevel <= threatNum;
+    return `<div class="threat-seg ${active ? threatColors[threatNum-1] : ''}"></div>`;
+  }).join('');
+
+  const bodyText = text
+    .replace(/CODENAME:\s*.+\n?/i, '')
+    .replace(/PRIMARY POWER:\s*.+\n?/i, '')
+    .replace(/SECONDARY POWER:\s*.+\n?/i, '')
+    .replace(/THREAT LEVEL:\s*.+\n?/i, '')
+    .trim();
+
+  const paragraphs = bodyText.split(/\n\n+/).filter(Boolean);
+
+  document.getElementById('analysis-area').innerHTML = `
+    <div class="result-header">
+      <div class="codename-block">
+        <div>
+          <div class="codename-label">DESIGNATED CODENAME</div>
+          <div class="codename-value">${codename}</div>
+        </div>
+      </div>
+      <div class="powers-row">
+        <div class="power-card primary">
+          <div class="power-card-label">Primary Ability</div>
+          <div class="power-card-value">${primaryPower}</div>
+        </div>
+        <div class="power-card">
+          <div class="power-card-label">Secondary Ability</div>
+          <div class="power-card-value">${secondaryPower}</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-divider"></div>
+    <div class="analysis-text">
+      ${paragraphs.map(p => `<p>${p.replace(/\n/g,' ')}</p>`).join('')}
+    </div>
+    <div class="result-footer">
+      <div class="threat-block">
+        <span class="threat-label">THREAT ASSESSMENT</span>
+        <div class="threat-segments">${segs}</div>
+      </div>
+      <div class="threat-level-badge">${threatLevel}</div>
+    </div>`;
+}
+
+function showError(msg) {
+  document.getElementById('error-area').innerHTML = msg ? `<div class="error">⚠ ${msg}</div>` : '';
+}
+</script>
+</body>
+</html>
